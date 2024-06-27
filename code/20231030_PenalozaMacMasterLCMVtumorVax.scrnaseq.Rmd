@@ -1,0 +1,479 @@
+---
+title: "LCMV scRNA-Seq processing"
+author: "Slim FOURATI"
+date: "`r Sys.Date()`"
+output: github_document
+---
+
+Load required packages
+```{r load-packages}
+suppressPackageStartupMessages(library(package = "knitr"))
+suppressPackageStartupMessages(library(package = "hdf5r"))
+suppressPackageStartupMessages(library(package = "Seurat"))
+suppressPackageStartupMessages(library(package = "celldex"))
+suppressPackageStartupMessages(library(package = "SingleR"))
+suppressPackageStartupMessages(library(package = "BiocParallel"))
+suppressPackageStartupMessages(library(package = "biomaRt"))
+suppressPackageStartupMessages(library(package = "ggbeeswarm"))
+suppressPackageStartupMessages(library(package = "ggpubr"))
+suppressPackageStartupMessages(library(package = "ggrepel"))
+suppressPackageStartupMessages(library(package = "xlsx"))
+suppressPackageStartupMessages(library(package = "tidyverse"))
+```
+
+```{r session-options}
+opts_chunk$set(echo = TRUE, fig.path = "../figure/")
+options(readr.show_col_types   = FALSE,
+        dplyr.summarise.inform = FALSE)
+workDir <- dirname(getwd())
+```
+
+```{r load-seuratobj, echo=FALSE}
+load(file = file.path(workDir, "output/lcmv.seuratObj.RData"))
+```
+
+```{r read-h5, eval=FALSE}
+seqFiles <- list.files(path       = file.path(workDir, "input"), 
+                      full.names = TRUE,
+                      pattern = ".+LCMV.+h5$")
+seuratObj <- NULL
+for (seqFile in seqFiles) {
+    seuratTemp <- Read10X_h5(filename = seqFile)
+    sampleId <- gsub(pattern     = "\\..+",
+                     replacement = "",
+                     basename(seqFile))
+    seuratTemp <- CreateSeuratObject(seuratTemp, 
+                                     project = sampleId)
+    seuratTemp <- RenameCells(seuratTemp,
+                              new.names = paste0(sampleId,
+                                                 "_",
+                                                 colnames(seuratTemp)))
+    seuratTemp <- DietSeurat(seuratTemp)
+
+    if (is.null(seuratObj)) {
+        seuratObj <- seuratTemp
+    } else {
+        seuratObj <- merge(x = seuratObj, y = seuratTemp)
+    }
+}
+```
+
+```{r clean-up, eval=FALSE}
+rm(seuratTemp)
+```
+
+# Quality control
+Percentage of mitochondrial reads
+```{r append-mito, eval=FALSE}
+ensembl <- useMart(biomart = "ensembl", dataset="mmusculus_gene_ensembl")
+gene2chr <- getBM(attributes = c("mgi_symbol", "chromosome_name"), 
+                  filters = "mgi_symbol", 
+                  values = rownames(seuratObj$RNA), 
+                  mart = ensembl)
+
+mito.genes <- filter(gene2chr, chromosome_name %in% "MT") %>%
+  .$mgi_symbol
+
+percent.mito <- Matrix::colSums(seuratObj$RNA@counts[mito.genes, ])/
+  Matrix::colSums(seuratObj$RNA@counts)
+
+# AddMetaData adds columns to object@meta.data, and is a great place to
+seuratObj <- AddMetaData(object   = seuratObj,
+                         metadata = percent.mito,
+                         col.name = "percent.mito")
+```
+
+```{r plot-mito, fig.width=4}
+ggplot(data    = seuratObj@meta.data,
+       mapping = aes(x = orig.ident, y = percent.mito)) +
+  geom_boxplot() +
+  scale_y_continuous(labels = scales::percent) +
+  labs(y = "Percentage of reads that are mitochondrial") +
+  theme_bw()
+```
+
+Percent of ribosomal reads
+```{r append-ribo, eval=FALSE}
+# look at ribosomal genes
+ribo.genes <- grep(pattern = "^Rps|^Rpl", 
+                   rownames(x = seuratObj$RNA@counts), 
+                   value   = TRUE)
+percent.ribo <- Matrix::colSums(seuratObj$RNA@counts[ribo.genes, ])/Matrix::colSums(seuratObj$RNA@counts)
+
+# AddMetaData adds columns to object@meta.data, and is a great place to
+seuratObj <- AddMetaData(object   = seuratObj,
+                         metadata = percent.ribo,
+                         col.name = "percent.ribo")
+```
+
+```{r plot-ribo, fig.width=4}
+ggplot(data    = seuratObj@meta.data,
+       mapping = aes(x = orig.ident, y = percent.ribo)) +
+  geom_boxplot() +
+  theme_bw()
+```
+
+Number of cell detected
+```{r read-qc-ge, fig.align="left"}
+nbCellDF <- table(seuratObj@meta.data$orig.ident) %>%
+  as.data.frame() %>%
+  rename(orig.ident                  = Var1,
+         `Estimated Number of Cells` = Freq)
+meanReadsPerCellDF <- colSums(seuratObj$RNA@counts) %>%
+  data.frame(eta = .) %>%
+  rownames_to_column() %>%
+  mutate(orig.ident = seuratObj@meta.data$orig.ident) %>%
+  group_by(orig.ident) %>%
+  summarize(`Mean Reads per Cell` = mean(eta))
+medianGenesPerCell <- colSums(seuratObj$RNA@counts > 0) %>%
+  data.frame(eta = .) %>%
+  rownames_to_column() %>%
+  mutate(orig.ident = seuratObj@meta.data$orig.ident) %>%
+  group_by(orig.ident) %>%
+  summarize(`Median Genes per Cell` = median(eta))
+
+plotDF <- merge(x    = nbCellDF,
+                y    = meanReadsPerCellDF,
+                by   = "orig.ident") %>%
+  merge(y  = medianGenesPerCell,
+        by = "orig.ident") %>%
+  pivot_longer(cols = -orig.ident)
+
+ggplot(data = plotDF,
+       mapping = aes(x = orig.ident, y = value)) +
+  geom_bar(stat = "identity") +
+  facet_grid(rows = ~name, scale = "free", space = "free_x") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5))
+
+plotDF %>%
+  group_by(name) %>%
+  summarize(median  = median(value),
+            min     = min(value),
+            max     = max(value)) %>%
+  rename(metric = name) %>%
+  kable()
+```
+
+# Cell annotation
+```{r umap, eval=FALSE}
+DefaultAssay(seuratObj) <- "RNA"
+seuratObj <- NormalizeData(seuratObj) %>% 
+    FindVariableFeatures() %>% 
+    ScaleData() %>% 
+    RunPCA()
+
+seuratObj <- RunUMAP(seuratObj, dims = 1:10, n.components = 2L) 
+```
+
+Expression of canonical markers
+```{r feature-plot-cd45, fig.height=2.75, fig.align="left"}
+feat1 <- FeaturePlot(object   = seuratObj,
+                     features = c("Ptprc", "Tyrp1"),
+                     raster   = FALSE)
+feat1
+```
+Ptprc=Cd45; cells clustering on UMAP1 > 5 are tumors cells (CD45-). Tyrp1 is a marker of melanocytes.
+
+```{r feature-plot-t, fig.height=8}
+feat2 <- FeaturePlot(object   = seuratObj, 
+		                 features = c("Cd3g", "Cd3g", "Cd3e",
+		     	      	                "Cd4", "Cd8a", "Cd8b1"),
+                     raster   = FALSE)
+feat2
+```
+
+```{r feature-plot-immune, fig.height=6}
+feat3 <- FeaturePlot(object = seuratObj,
+                     features = c("Cd14",
+                                  "Fcgr3",
+                                  "Cd33",
+                                  "Itgax" #CD11c
+                                  ),
+  raster = FALSE)
+feat3
+feat4 <- FeaturePlot(object = seuratObj,
+                     features = c("Cd19",
+                                  "Ms4a1", # CD20
+                                  "Cd79a",
+                                  "Cd79b"),
+  raster = FALSE)
+feat4
+```
+
+```{r feature-plot-lcmv, fig.height=6, fig.align="left", warning=FALSE}
+feat5 <- FeaturePlot(object = seuratObj,
+                     features = c("LCMV-chrL", "LCMV-chrS"),
+  raster = FALSE,
+  split.by = "orig.ident")
+feat5
+```
+
+```{r feature-plot-fibroblast, echo=FALSE, eval=FALSE}
+feat6 <- FeaturePlot(object = seuratObj,
+                     features = c("Col1a1", "Col1a2", "Col3a1"),
+  raster = FALSE)
+feat6
+```
+
+SingleR at the cell levels
+```{r singler, eval=TRUE, message=FALSE, fig.height=6, fig.width=5.5, fig.align="left"}
+scaledMat <- seuratObj$RNA@data
+immgen <- celldex::ImmGenData()
+predSubset <- SingleR(test    = scaledMat,
+                      ref     = immgen,
+                      labels  = immgen$label.main,
+                      BPPARAM = MulticoreParam(workers = 7))
+seuratObj <- AddMetaData(object   = seuratObj,
+                         metadata = predSubset$labels,
+                         col.name = "immgen.main")
+
+umap1 <- DimPlot(seuratObj,
+reduction  = 'umap',
+group.by   = 'immgen.main',
+raster     = FALSE) +
+theme(legend.position = "bottom",
+      legend.key.size = unit(x = 0.1, units = "in"),
+      legend.text = element_text(size = 7))
+umap1
+```
+
+SingleR at the cluster level
+```{r seurat-cluster, eval=FALSE}
+seuratObj <- FindNeighbors(seuratObj, reduction = "umap", dims = 1:2)
+seuratObj <- FindClusters(seuratObj, resolution = 0.5)
+```
+
+```{r umap-cluster, fig.height=6.5, fig.width=5.5, fig.align="left"}
+umap2 <- DimPlot(seuratObj,
+        reduction  = 'umap', 
+        group.by   = 'seurat_clusters',
+        raster     = FALSE,
+        label = TRUE) + 
+  theme(legend.position = "bottom")
+umap2
+```
+
+```{r singler-cluster, message=FALSE, eval=TRUE}
+scaledMat <- seuratObj$RNA@data
+immgen <- celldex::ImmGenData()
+predSubset <- SingleR(test    = scaledMat,
+                      ref     = immgen,
+                      clusters = seuratObj@meta.data$seurat_clusters,
+                      labels  = immgen$label.main,
+                      BPPARAM = MulticoreParam(workers = 7))
+# correct cluster annotation
+immgen.main <- predSubset$pruned.labels[match(seuratObj$seurat_clusters,
+                        table = rownames(predSubset))]
+immgen.main[seuratObj$seurat_clusters %in% c(12, 15, 27)] <- "Tumor"
+immgen.main[seuratObj$seurat_clusters %in% 9] <- "Stroma"
+immgen.main[seuratObj$seurat_clusters %in% 25] <- "DC"
+immgen.main[seuratObj$seurat_clusters %in% c(3, 4, 8, 10, 13)] <- "Monocytes/Macrophages"
+immgen.main[seuratObj$seurat_clusters %in% c(0, 11, 18, 21)] <- "T cells"
+immgen.main[seuratObj$seurat_clusters %in% c(5, 6, 16, 22)] <- "NK cells"
+
+if ("immgen.main" %in% colnames(seuratObj@meta.data)) {
+  seuratObj$immgen.main <- NULL
+}
+seuratObj <- AddMetaData(object   = seuratObj,
+                         metadata = immgen.main,
+                         col.name = "immgen.main")
+```
+
+```{r umap-singler-cluster, fig.height=6}
+umap3 <- DimPlot(seuratObj,
+        reduction  = 'umap', 
+        group.by   = 'immgen.main',
+        raster     = FALSE) + 
+  theme(legend.position = "bottom")
+umap3
+```
+
+```{r umap-by-treat}
+seuratObj$orig.ident <- gsub(pattern     = "_LCMV",
+                             replacement = "",
+                             seuratObj$orig.ident)
+umap4 <- DimPlot(seuratObj,
+                 reduction  = 'umap',
+                 group.by   = 'immgen.main',
+                 split.by   = 'orig.ident',
+                 raster     = FALSE) +
+  theme(legend.position = "bottom")
+umap4 +
+  geom_point(data = umap4$data[(Matrix::colSums(seuratObj$RNA@counts[c("LCMV-chrL", "LCMV-chrS"), ]) >= 1), ],
+             mapping = aes(x = UMAP_1, y = UMAP_2), cex = 0.5) +
+  labs(title = NULL)
+```
+
+
+```{r save-seuratobj, eval=FALSE}
+save(seuratObj, file = file.path(workDir, "output/lcmv.seuratObj.RData"))
+```
+
+# LCMV reads
+```{r lcmv-vln, message=FALSE}
+vln2 <- VlnPlot(object = seuratObj,
+          features = c("LCMV-chrL", "LCMV-chrS"),
+        group.by= "immgen.main",
+        split.by = "orig.ident")
+vln2
+```
+LCMV reads are only detected in the R3 samples (right) and mostly in tumor cells and then in some monocytes and DCs.
+
+# Type I ISGs expression
+```{r isg-score, warning=FALSE}
+isgLS <- fgsea:::gmtPathways("/Users/iew5629/Desktop/Projects/Utils/MSigDB/h.all.v2023.1.Hs.symbols.gmt") %>%
+  .[["HALLMARK_INTERFERON_ALPHA_RESPONSE"]]
+
+human <- useMart(biomart = "ensembl", 
+                 dataset = "hsapiens_gene_ensembl",
+                 host    = "https://dec2021.archive.ensembl.org/")
+mouse <- useMart(biomart = "ensembl", 
+                 dataset="mmusculus_gene_ensembl",
+                 host    = "https://dec2021.archive.ensembl.org/")
+human2mouse <- getLDS(mart = human, attributes = "hgnc_symbol", 
+                      filters = "hgnc_symbol", values = isgLS, 
+                      attributesL = "mgi_symbol", martL = mouse)
+seuratObj <- AddModuleScore(seuratObj, features = list(isg = human2mouse$MGI.symbol),
+                            name = "isg")
+```
+
+```{r umap-is, fig.height=3.5}
+FeaturePlot(seuratObj, 
+            features = "isg1",
+            split.by = "orig.ident")
+```
+
+```{r boxplot-isg, fig.width=6, message=FALSE}
+vln1 <- VlnPlot(object = seuratObj,
+          features = "isg1",
+        group.by= "orig.ident",
+        split.by = "immgen.main")
+
+vln1$data %>%
+  ggplot(mapping = aes(x = ident, y = isg1)) +
+  geom_beeswarm(size = 0.5, cex = 0.75) +
+  geom_boxplot(outlier.color = "transparent", fill = "transparent", color = "red") +
+  labs(x = NULL, y = "Type I ISGs") +
+  stat_compare_means(cex = 2) +
+  facet_wrap(facets = ~split, scale = "free_y", nrow = 2) +
+  theme_bw()
+```
+
+```{r cor-tumor-lcmv-isg, fig.width=5, fig.height=6, fig.align="left"}
+tumorObj <- subset(seuratObj, immgen.main == "Tumor")
+tumorObj <- subset(tumorObj, seurat_clusters != "9") # low Tyrp1 (melanocyte marker)
+Matrix::colSums(tumorObj$RNA@counts[c("LCMV-chrS", "LCMV-chrL"), ]) %>%
+  data.frame(LCMV = .) %>%
+  rownames_to_column(var = "cellbarcode") %>%
+  merge(y = rownames_to_column(tumorObj@meta.data, var = "cellbarcode"),
+        by = "cellbarcode") %>%
+  mutate(`LCMV > 0` = (LCMV > 0),
+         `LCMV > 0` = paste0(gsub(pattern = "_.+",
+                                  replacement = "",
+                                  orig.ident),
+                             ".",
+                             `LCMV > 0`)) %>%
+  ggplot(mapping = aes(x = `LCMV > 0`, y = isg1)) +
+  geom_beeswarm(cex = 0.75) + 
+  geom_boxplot(outlier.colour = "transparent", color = "red", fill = "transparent") +
+  labs(title = "Tumor cells", y = "Type I ISGs") +
+  stat_compare_means(ref.group = "PBS.FALSE") +
+  theme_bw()
+```
+Tumor cells with LCMV reads express higher levels of Type I ISG than tumor cells without LCMV reads or tumor cells from the PBS.
+
+```{r test-prop}
+freqDF <- seuratObj@meta.data %>%
+  group_by(orig.ident, immgen.main) %>%
+  summarize(n = n(), .groups = "drop")
+
+seuratObj@meta.data %>%
+  group_by(orig.ident) %>%
+  summarize(tot = n(), .groups = "drop") %>%
+  merge(x = freqDF, by = "orig.ident") %>%
+  mutate(freq = n/tot) -> freqDF
+
+ggplot(data = freqDF,
+       mapping = aes(x = orig.ident, y = freq * 100)) +
+  geom_bar(stat = "identity", mapping = aes(fill = immgen.main)) +
+  scale_y_continuous() +
+  labs(y = "Frequency (%)") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+```{r deg, eval=FALSE}
+Idents(seuratObj) <- interaction(seuratObj$immgen.main,
+                                 seuratObj$orig.ident,
+                                 drop = TRUE)
+fits <- NULL
+for (GOI1 in grep(pattern = "R3$", levels(seuratObj), value = TRUE)) {
+  GOI2 <- gsub(pattern = "R3$", replacement = "PBS", GOI1)
+  de.markers <- FindMarkers(seuratObj, ident.1 = GOI1, ident.2 = GOI2) %>%
+    mutate(contrast = paste0(GOI1, "-", GOI2))
+  fits[[paste0(GOI1, "-", GOI2)]] <- de.markers
+}
+
+save(fits, file = file.path(workDir, "output/lcmv.fits.RData"))
+```
+
+```{r volcano-isg-tumor}
+tumorObj <- subset(seuratObj, immgen.main == "Tumor")
+
+lcmv <- ifelse(test = Matrix::colSums(tumorObj$RNA@counts[c("LCMV-chrL", "LCMV-chrS"), ]) >= 1,
+                                           yes = "LCMVpos",
+                                           no  = "LCMVneg")
+tumorObj <- AddMetaData(tumorObj, 
+                        metadata = lcmv,
+                        col.name = "LCMV")
+Idents(tumorObj) <- tumorObj$LCMV
+set.seed(seed = 1)
+de.markers <- FindMarkers(tumorObj, 
+                          test.use = "negbinom",
+                          ident.1 = "LCMVpos",
+                          ident.2 = "LCMVneg",
+                          logfc.threshold = 0)
+
+ggplot(data = de.markers,
+       mapping = aes(x = avg_log2FC, y = -log10(p_val))) +
+  geom_point() +
+  geom_point(data = rownames_to_column(de.markers, var = "gene_name") %>%filter(gene_name %in% human2mouse$MGI.symbol & p_val_adj <= 0.05 & abs(avg_log2FC) >= 0.25),
+             color = "red") +
+  coord_cartesian(xlim = c(-1.5, 1.5), ylim = c(0, 15)) +
+  geom_hline(yintercept = -1 * log10(filter(de.markers, p_val_adj <= 0.05) %>% .$p_val %>% max()), linetype = 2) +
+  geom_text_repel(data = rownames_to_column(de.markers, var = "gene_name") %>%filter(gene_name %in% human2mouse$MGI.symbol & p_val_adj <= 0.05 & abs(avg_log2FC) >= 0.25),
+                  mapping = aes(label = gene_name), color = "red") +
+  theme_bw()
+
+tumorR3Obj <- subset(seuratObj, immgen.main == "Tumor" & orig.ident %in% "R3")
+
+lcmv <- ifelse(test = Matrix::colSums(tumorR3Obj$RNA@counts[c("LCMV-chrL", "LCMV-chrS"), ]) >= 1,
+                                           yes = "LCMVpos",
+                                           no  = "LCMVneg")
+tumorR3Obj <- AddMetaData(tumorR3Obj, 
+                        metadata = lcmv,
+                        col.name = "LCMV")
+Idents(tumorR3Obj) <- tumorR3Obj$LCMV
+set.seed(seed = 1)
+de.markers <- FindMarkers(tumorR3Obj, 
+                          test.use = "negbinom",
+                          ident.1 = "LCMVpos",
+                          ident.2 = "LCMVneg",
+                          logfc.threshold = 0)
+
+ggplot(data = de.markers,
+       mapping = aes(x = avg_log2FC, y = -log10(p_val))) +
+  geom_point() +
+  geom_point(data = rownames_to_column(de.markers, var = "gene_name") %>%filter(gene_name %in% human2mouse$MGI.symbol & p_val_adj <= 0.05 & abs(avg_log2FC) >= 0.25),
+             color = "red") +
+  coord_cartesian(xlim = c(-1.5, 1.5), ylim = c(0, 20)) +
+  geom_hline(yintercept = -1 * log10(filter(de.markers, p_val_adj <= 0.05) %>% .$p_val %>% max()), linetype = 2) +
+  geom_text_repel(data = rownames_to_column(de.markers, var = "gene_name") %>%filter(gene_name %in% human2mouse$MGI.symbol & p_val_adj <= 0.05 & abs(avg_log2FC) >= 0.25),
+                  mapping = aes(label = gene_name), color = "red") +
+  theme_bw()
+```
+
+```{r session-info}
+sessionInfo()
+```
