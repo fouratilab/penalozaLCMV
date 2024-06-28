@@ -305,7 +305,6 @@ umap4 +
   labs(title = NULL)
 ```
 
-
 ```{r save-seuratobj, eval=FALSE}
 save(seuratObj, file = file.path(workDir, "output/lcmv.seuratObj.RData"))
 ```
@@ -418,7 +417,7 @@ for (GOI1 in grep(pattern = "R3$", levels(seuratObj), value = TRUE)) {
 save(fits, file = file.path(workDir, "output/lcmv.fits.RData"))
 ```
 
-```{r volcano-isg-tumor}
+```{r volcano-isg-tumor, warning=FALSE}
 tumorObj <- subset(seuratObj, immgen.main == "Tumor")
 
 lcmv <- ifelse(test = Matrix::colSums(tumorObj$RNA@counts[c("LCMV-chrL", "LCMV-chrS"), ]) >= 1,

@@ -1,7 +1,7 @@
 LCMV scRNA-Seq processing
 ================
 Slim FOURATI
-2024-02-09
+2024-06-27
 
 Load required packages
 
@@ -89,7 +89,10 @@ ggplot(data    = seuratObj@meta.data,
   theme_bw()
 ```
 
-![](../figure/plot-mito-1.png)<!-- -->
+<figure>
+<img src="../figure/plot-mito-1.png" alt="plot of chunk plot-mito" />
+<figcaption aria-hidden="true">plot of chunk plot-mito</figcaption>
+</figure>
 
 Percent of ribosomal reads
 
@@ -113,7 +116,10 @@ ggplot(data    = seuratObj@meta.data,
   theme_bw()
 ```
 
-![](../figure/plot-ribo-1.png)<!-- -->
+<figure>
+<img src="../figure/plot-ribo-1.png" alt="plot of chunk plot-ribo" />
+<figcaption aria-hidden="true">plot of chunk plot-ribo</figcaption>
+</figure>
 
 Number of cell detected
 
@@ -150,7 +156,14 @@ ggplot(data = plotDF,
   theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5))
 ```
 
-<img src="../figure/read-qc-ge-1.png" style="display: block; margin: auto auto auto 0;" />
+<div class="figure" style="text-align: left">
+
+<img src="../figure/read-qc-ge-1.png" alt="plot of chunk read-qc-ge"  />
+<p class="caption">
+plot of chunk read-qc-ge
+</p>
+
+</div>
 
 ``` r
 plotDF %>%
@@ -189,7 +202,15 @@ feat1 <- FeaturePlot(object   = seuratObj,
 feat1
 ```
 
-<img src="../figure/feature-plot-cd45-1.png" style="display: block; margin: auto auto auto 0;" />
+<div class="figure" style="text-align: left">
+
+<img src="../figure/feature-plot-cd45-1.png" alt="plot of chunk feature-plot-cd45"  />
+<p class="caption">
+plot of chunk feature-plot-cd45
+</p>
+
+</div>
+
 Ptprc=Cd45; cells clustering on UMAP1 \> 5 are tumors cells (CD45-).
 Tyrp1 is a marker of melanocytes.
 
@@ -201,7 +222,11 @@ feat2 <- FeaturePlot(object   = seuratObj,
 feat2
 ```
 
-![](../figure/feature-plot-t-1.png)<!-- -->
+<figure>
+<img src="../figure/feature-plot-t-1.png"
+alt="plot of chunk feature-plot-t" />
+<figcaption aria-hidden="true">plot of chunk feature-plot-t</figcaption>
+</figure>
 
 ``` r
 feat3 <- FeaturePlot(object = seuratObj,
@@ -214,7 +239,12 @@ feat3 <- FeaturePlot(object = seuratObj,
 feat3
 ```
 
-![](../figure/feature-plot-immune-1.png)<!-- -->
+<figure>
+<img src="../figure/feature-plot-immune-1.png"
+alt="plot of chunk feature-plot-immune" />
+<figcaption aria-hidden="true">plot of chunk
+feature-plot-immune</figcaption>
+</figure>
 
 ``` r
 feat4 <- FeaturePlot(object = seuratObj,
@@ -226,7 +256,12 @@ feat4 <- FeaturePlot(object = seuratObj,
 feat4
 ```
 
-![](../figure/feature-plot-immune-2.png)<!-- -->
+<figure>
+<img src="../figure/feature-plot-immune-2.png"
+alt="plot of chunk feature-plot-immune" />
+<figcaption aria-hidden="true">plot of chunk
+feature-plot-immune</figcaption>
+</figure>
 
 ``` r
 feat5 <- FeaturePlot(object = seuratObj,
@@ -236,7 +271,14 @@ feat5 <- FeaturePlot(object = seuratObj,
 feat5
 ```
 
-<img src="../figure/feature-plot-lcmv-1.png" style="display: block; margin: auto auto auto 0;" />
+<div class="figure" style="text-align: left">
+
+<img src="../figure/feature-plot-lcmv-1.png" alt="plot of chunk feature-plot-lcmv"  />
+<p class="caption">
+plot of chunk feature-plot-lcmv
+</p>
+
+</div>
 
 SingleR at the cell levels
 
@@ -261,7 +303,14 @@ theme(legend.position = "bottom",
 umap1
 ```
 
-<img src="../figure/singler-1.png" style="display: block; margin: auto auto auto 0;" />
+<div class="figure" style="text-align: left">
+
+<img src="../figure/singler-1.png" alt="plot of chunk singler"  />
+<p class="caption">
+plot of chunk singler
+</p>
+
+</div>
 
 SingleR at the cluster level
 
@@ -280,7 +329,14 @@ umap2 <- DimPlot(seuratObj,
 umap2
 ```
 
-<img src="../figure/umap-cluster-1.png" style="display: block; margin: auto auto auto 0;" />
+<div class="figure" style="text-align: left">
+
+<img src="../figure/umap-cluster-1.png" alt="plot of chunk umap-cluster"  />
+<p class="caption">
+plot of chunk umap-cluster
+</p>
+
+</div>
 
 ``` r
 scaledMat <- seuratObj$RNA@data
@@ -317,7 +373,12 @@ umap3 <- DimPlot(seuratObj,
 umap3
 ```
 
-![](../figure/umap-singler-cluster-1.png)<!-- -->
+<figure>
+<img src="../figure/umap-singler-cluster-1.png"
+alt="plot of chunk umap-singler-cluster" />
+<figcaption aria-hidden="true">plot of chunk
+umap-singler-cluster</figcaption>
+</figure>
 
 ``` r
 seuratObj$orig.ident <- gsub(pattern     = "_LCMV",
@@ -335,7 +396,11 @@ umap4 +
   labs(title = NULL)
 ```
 
-![](../figure/umap-by-treat-1.png)<!-- -->
+<figure>
+<img src="../figure/umap-by-treat-1.png"
+alt="plot of chunk umap-by-treat" />
+<figcaption aria-hidden="true">plot of chunk umap-by-treat</figcaption>
+</figure>
 
 ``` r
 save(seuratObj, file = file.path(workDir, "output/lcmv.seuratObj.RData"))
@@ -351,9 +416,9 @@ vln2 <- VlnPlot(object = seuratObj,
 vln2
 ```
 
-![](../figure/lcmv-vln-1.png)<!-- --> LCMV reads are only detected in
-the R3 samples (right) and mostly in tumor cells and then in some
-monocytes and DCs.
+![plot of chunk lcmv-vln](../figure/lcmv-vln-1.png) LCMV reads are only
+detected in the R3 samples (right) and mostly in tumor cells and then in
+some monocytes and DCs.
 
 # Type I ISGs expression
 
@@ -380,7 +445,10 @@ FeaturePlot(seuratObj,
             split.by = "orig.ident")
 ```
 
-![](../figure/umap-is-1.png)<!-- -->
+<figure>
+<img src="../figure/umap-is-1.png" alt="plot of chunk umap-is" />
+<figcaption aria-hidden="true">plot of chunk umap-is</figcaption>
+</figure>
 
 ``` r
 vln1 <- VlnPlot(object = seuratObj,
@@ -398,7 +466,11 @@ vln1$data %>%
   theme_bw()
 ```
 
-![](../figure/boxplot-isg-1.png)<!-- -->
+<figure>
+<img src="../figure/boxplot-isg-1.png"
+alt="plot of chunk boxplot-isg" />
+<figcaption aria-hidden="true">plot of chunk boxplot-isg</figcaption>
+</figure>
 
 ``` r
 tumorObj <- subset(seuratObj, immgen.main == "Tumor")
@@ -422,7 +494,15 @@ Matrix::colSums(tumorObj$RNA@counts[c("LCMV-chrS", "LCMV-chrL"), ]) %>%
   theme_bw()
 ```
 
-<img src="../figure/cor-tumor-lcmv-isg-1.png" style="display: block; margin: auto auto auto 0;" />
+<div class="figure" style="text-align: left">
+
+<img src="../figure/cor-tumor-lcmv-isg-1.png" alt="plot of chunk cor-tumor-lcmv-isg"  />
+<p class="caption">
+plot of chunk cor-tumor-lcmv-isg
+</p>
+
+</div>
+
 Tumor cells with LCMV reads express higher levels of Type I ISG than
 tumor cells without LCMV reads or tumor cells from the PBS.
 
@@ -446,7 +526,10 @@ ggplot(data = freqDF,
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
-![](../figure/test-prop-1.png)<!-- -->
+<figure>
+<img src="../figure/test-prop-1.png" alt="plot of chunk test-prop" />
+<figcaption aria-hidden="true">plot of chunk test-prop</figcaption>
+</figure>
 
 ``` r
 Idents(seuratObj) <- interaction(seuratObj$immgen.main,
@@ -479,153 +562,7 @@ de.markers <- FindMarkers(tumorObj,
                           ident.1 = "LCMVpos",
                           ident.2 = "LCMVneg",
                           logfc.threshold = 0)
-```
 
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in sqrt(1/i): NaNs produced
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in sqrt(1/i): NaNs produced
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in sqrt(1/i): NaNs produced
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in sqrt(1/i): NaNs produced
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in sqrt(1/i): NaNs produced
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in sqrt(1/i): NaNs produced
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-``` r
 ggplot(data = de.markers,
        mapping = aes(x = avg_log2FC, y = -log10(p_val))) +
   geom_point() +
@@ -638,10 +575,12 @@ ggplot(data = de.markers,
   theme_bw()
 ```
 
-    ## Warning: ggrepel: 13 unlabeled data points (too many overlaps). Consider
-    ## increasing max.overlaps
-
-![](../figure/volcano-isg-tumor-1.png)<!-- -->
+<figure>
+<img src="../figure/volcano-isg-tumor-1.png"
+alt="plot of chunk volcano-isg-tumor" />
+<figcaption aria-hidden="true">plot of chunk
+volcano-isg-tumor</figcaption>
+</figure>
 
 ``` r
 tumorR3Obj <- subset(seuratObj, immgen.main == "Tumor" & orig.ident %in% "R3")
@@ -659,293 +598,7 @@ de.markers <- FindMarkers(tumorR3Obj,
                           ident.1 = "LCMVpos",
                           ident.2 = "LCMVneg",
                           logfc.threshold = 0)
-```
 
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in sqrt(1/i): NaNs produced
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in sqrt(1/i): NaNs produced
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in sqrt(1/i): NaNs produced
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in sqrt(1/i): NaNs produced
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-    ## Warning in theta.ml(Y, mu, sum(w), w, limit = control$maxit, trace =
-    ## control$trace > : iteration limit reached
-
-``` r
 ggplot(data = de.markers,
        mapping = aes(x = avg_log2FC, y = -log10(p_val))) +
   geom_point() +
@@ -958,22 +611,24 @@ ggplot(data = de.markers,
   theme_bw()
 ```
 
-    ## Warning: ggrepel: 37 unlabeled data points (too many overlaps). Consider
-    ## increasing max.overlaps
-
-![](../figure/volcano-isg-tumor-2.png)<!-- -->
+<figure>
+<img src="../figure/volcano-isg-tumor-2.png"
+alt="plot of chunk volcano-isg-tumor" />
+<figcaption aria-hidden="true">plot of chunk
+volcano-isg-tumor</figcaption>
+</figure>
 
 ``` r
 sessionInfo()
 ```
 
-    ## R version 4.3.2 (2023-10-31)
-    ## Platform: aarch64-apple-darwin23.0.0 (64-bit)
-    ## Running under: macOS Sonoma 14.3
+    ## R version 4.4.1 (2024-06-14)
+    ## Platform: aarch64-apple-darwin23.4.0
+    ## Running under: macOS Sonoma 14.5
     ## 
     ## Matrix products: default
-    ## BLAS:   /opt/homebrew/Cellar/openblas/0.3.26/lib/libopenblasp-r0.3.26.dylib 
-    ## LAPACK: /opt/homebrew/Cellar/r/4.3.2/lib/R/lib/libRlapack.dylib;  LAPACK version 3.11.0
+    ## BLAS:   /opt/homebrew/Cellar/openblas/0.3.27/lib/libopenblasp-r0.3.27.dylib 
+    ## LAPACK: /opt/homebrew/Cellar/r/4.4.1/lib/R/lib/libRlapack.dylib;  LAPACK version 3.12.0
     ## 
     ## locale:
     ## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
@@ -992,94 +647,97 @@ sessionInfo()
     ##  [7] tidyr_1.3.1                 tibble_3.2.1               
     ##  [9] tidyverse_2.0.0             xlsx_0.6.5                 
     ## [11] ggrepel_0.9.5               ggpubr_0.6.0               
-    ## [13] ggbeeswarm_0.7.2            ggplot2_3.4.4              
-    ## [15] biomaRt_2.58.2              BiocParallel_1.36.0        
-    ## [17] SingleR_2.4.1               celldex_1.12.0             
-    ## [19] SummarizedExperiment_1.32.0 Biobase_2.62.0             
-    ## [21] GenomicRanges_1.54.1        GenomeInfoDb_1.38.5        
-    ## [23] IRanges_2.36.0              S4Vectors_0.40.2           
-    ## [25] BiocGenerics_0.48.1         MatrixGenerics_1.14.0      
-    ## [27] matrixStats_1.2.0           SeuratObject_5.0.1         
-    ## [29] Seurat_4.4.0                hdf5r_1.3.9                
-    ## [31] knitr_1.45                 
+    ## [13] ggbeeswarm_0.7.2            ggplot2_3.5.1              
+    ## [15] biomaRt_2.60.0              BiocParallel_1.38.0        
+    ## [17] SingleR_2.6.0               celldex_1.14.0             
+    ## [19] SummarizedExperiment_1.34.0 Biobase_2.64.0             
+    ## [21] GenomicRanges_1.56.1        GenomeInfoDb_1.40.1        
+    ## [23] IRanges_2.38.0              S4Vectors_0.42.0           
+    ## [25] BiocGenerics_0.50.0         MatrixGenerics_1.16.0      
+    ## [27] matrixStats_1.3.0           SeuratObject_5.0.2         
+    ## [29] Seurat_4.4.0                hdf5r_1.3.10               
+    ## [31] knitr_1.47                 
     ## 
     ## loaded via a namespace (and not attached):
-    ##   [1] RcppAnnoy_0.0.22              splines_4.3.2                
-    ##   [3] later_1.3.2                   bitops_1.0-7                 
-    ##   [5] filelock_1.0.3                polyclip_1.10-6              
-    ##   [7] XML_3.99-0.16.1               lifecycle_1.0.4              
-    ##   [9] rstatix_0.7.2                 globals_0.16.2               
-    ##  [11] lattice_0.22-5                MASS_7.3-60.0.1              
-    ##  [13] backports_1.4.1               magrittr_2.0.3               
-    ##  [15] plotly_4.10.4                 rmarkdown_2.25               
-    ##  [17] yaml_2.3.8                    httpuv_1.6.14                
-    ##  [19] sctransform_0.4.1             spam_2.10-0                  
-    ##  [21] sp_2.1-3                      spatstat.sparse_3.0-3        
-    ##  [23] reticulate_1.35.0             cowplot_1.1.3                
-    ##  [25] pbapply_1.7-2                 DBI_1.2.1                    
-    ##  [27] RColorBrewer_1.1-3            abind_1.4-5                  
-    ##  [29] zlibbioc_1.48.0               Rtsne_0.17                   
-    ##  [31] RCurl_1.98-1.14               xlsxjars_0.6.1               
-    ##  [33] rappdirs_0.3.3                GenomeInfoDbData_1.2.11      
-    ##  [35] irlba_2.3.5.1                 listenv_0.9.1                
-    ##  [37] spatstat.utils_3.0-4          goftest_1.2-3                
-    ##  [39] spatstat.random_3.2-2         fitdistrplus_1.1-11          
-    ##  [41] parallelly_1.36.0             DelayedMatrixStats_1.24.0    
-    ##  [43] leiden_0.4.3.1                codetools_0.2-19             
-    ##  [45] DelayedArray_0.28.0           xml2_1.3.6                   
-    ##  [47] tidyselect_1.2.0              farver_2.1.1                 
-    ##  [49] ScaledMatrix_1.10.0           BiocFileCache_2.10.1         
-    ##  [51] spatstat.explore_3.2-6        jsonlite_1.8.8               
-    ##  [53] ellipsis_0.3.2                progressr_0.14.0             
-    ##  [55] ggridges_0.5.6                survival_3.5-7               
-    ##  [57] progress_1.2.3                tools_4.3.2                  
-    ##  [59] ica_1.0-3                     Rcpp_1.0.12                  
-    ##  [61] glue_1.7.0                    gridExtra_2.3                
-    ##  [63] SparseArray_1.2.3             xfun_0.41                    
-    ##  [65] withr_3.0.0                   BiocManager_1.30.22          
-    ##  [67] fastmap_1.1.1                 fansi_1.0.6                  
-    ##  [69] rsvd_1.0.5                    digest_0.6.34                
-    ##  [71] timechange_0.3.0              R6_2.5.1                     
-    ##  [73] mime_0.12                     colorspace_2.1-0             
-    ##  [75] scattermore_1.2               tensor_1.5                   
-    ##  [77] spatstat.data_3.0-4           RSQLite_2.3.5                
-    ##  [79] utf8_1.2.4                    generics_0.1.3               
-    ##  [81] data.table_1.15.0             prettyunits_1.2.0            
-    ##  [83] httr_1.4.7                    htmlwidgets_1.6.4            
-    ##  [85] S4Arrays_1.2.0                uwot_0.1.16                  
-    ##  [87] pkgconfig_2.0.3               rJava_1.0-11                 
-    ##  [89] gtable_0.3.4                  blob_1.2.4                   
-    ##  [91] lmtest_0.9-40                 XVector_0.42.0               
-    ##  [93] htmltools_0.5.7               carData_3.0-5                
-    ##  [95] fgsea_1.28.0                  dotCall64_1.1-1              
-    ##  [97] scales_1.3.0                  png_0.1-8                    
-    ##  [99] rstudioapi_0.15.0             tzdb_0.4.0                   
-    ## [101] reshape2_1.4.4                nlme_3.1-164                 
-    ## [103] curl_5.2.0                    zoo_1.8-12                   
-    ## [105] cachem_1.0.8                  BiocVersion_3.18.1           
-    ## [107] KernSmooth_2.23-22            vipor_0.4.7                  
-    ## [109] parallel_4.3.2                miniUI_0.1.1.1               
-    ## [111] AnnotationDbi_1.64.1          pillar_1.9.0                 
-    ## [113] grid_4.3.2                    vctrs_0.6.5                  
-    ## [115] RANN_2.6.1                    promises_1.2.1               
-    ## [117] car_3.1-2                     BiocSingular_1.18.0          
-    ## [119] beachmat_2.18.0               dbplyr_2.4.0                 
-    ## [121] xtable_1.8-4                  cluster_2.1.6                
-    ## [123] beeswarm_0.4.0                evaluate_0.23                
-    ## [125] cli_3.6.2                     compiler_4.3.2               
-    ## [127] rlang_1.1.3                   crayon_1.5.2                 
-    ## [129] ggsignif_0.6.4                future.apply_1.11.1          
-    ## [131] labeling_0.4.3                plyr_1.8.9                   
-    ## [133] stringi_1.8.3                 viridisLite_0.4.2            
-    ## [135] deldir_2.0-2                  munsell_0.5.0                
-    ## [137] Biostrings_2.70.2             lazyeval_0.2.2               
-    ## [139] spatstat.geom_3.2-8           Matrix_1.6-5                 
-    ## [141] ExperimentHub_2.10.0          hms_1.1.3                    
-    ## [143] patchwork_1.2.0               sparseMatrixStats_1.14.0     
-    ## [145] bit64_4.0.5                   future_1.33.1                
-    ## [147] KEGGREST_1.42.0               shiny_1.8.0                  
-    ## [149] highr_0.10                    interactiveDisplayBase_1.40.0
-    ## [151] AnnotationHub_3.10.0          ROCR_1.0-11                  
-    ## [153] broom_1.0.5                   igraph_2.0.1.1               
-    ## [155] memoise_2.0.1                 fastmatch_1.1-4              
-    ## [157] bit_4.0.5
+    ##   [1] spatstat.sparse_3.1-0     httr_1.4.7               
+    ##   [3] RColorBrewer_1.1-3        tools_4.4.1              
+    ##   [5] sctransform_0.4.1         backports_1.5.0          
+    ##   [7] alabaster.base_1.4.2      utf8_1.2.4               
+    ##   [9] R6_2.5.1                  HDF5Array_1.32.0         
+    ##  [11] lazyeval_0.2.2            uwot_0.2.2               
+    ##  [13] rhdf5filters_1.16.0       withr_3.0.0              
+    ##  [15] sp_2.1-4                  prettyunits_1.2.0        
+    ##  [17] gridExtra_2.3             progressr_0.14.0         
+    ##  [19] cli_3.6.3                 spatstat.explore_3.2-7   
+    ##  [21] alabaster.se_1.4.1        labeling_0.4.3           
+    ##  [23] spatstat.data_3.1-2       ggridges_0.5.6           
+    ##  [25] pbapply_1.7-2             parallelly_1.37.1        
+    ##  [27] RSQLite_2.3.7             generics_0.1.3           
+    ##  [29] ica_1.0-3                 spatstat.random_3.2-3    
+    ##  [31] car_3.1-2                 Matrix_1.7-0             
+    ##  [33] fansi_1.0.6               abind_1.4-5              
+    ##  [35] lifecycle_1.0.4           yaml_2.3.8               
+    ##  [37] carData_3.0-5             rhdf5_2.48.0             
+    ##  [39] SparseArray_1.4.8         BiocFileCache_2.12.0     
+    ##  [41] Rtsne_0.17                grid_4.4.1               
+    ##  [43] blob_1.2.4                promises_1.3.0           
+    ##  [45] ExperimentHub_2.12.0      crayon_1.5.3             
+    ##  [47] miniUI_0.1.1.1            lattice_0.22-6           
+    ##  [49] beachmat_2.20.0           cowplot_1.1.3            
+    ##  [51] xlsxjars_0.6.1            KEGGREST_1.44.1          
+    ##  [53] pillar_1.9.0              fgsea_1.30.0             
+    ##  [55] future.apply_1.11.2       codetools_0.2-20         
+    ##  [57] fastmatch_1.1-4           leiden_0.4.3.1           
+    ##  [59] glue_1.7.0                data.table_1.15.4        
+    ##  [61] vctrs_0.6.5               png_0.1-8                
+    ##  [63] gypsum_1.0.1              spam_2.10-0              
+    ##  [65] gtable_0.3.5              cachem_1.1.0             
+    ##  [67] xfun_0.45                 S4Arrays_1.4.1           
+    ##  [69] mime_0.12                 survival_3.7-0           
+    ##  [71] rJava_1.0-11              fitdistrplus_1.1-11      
+    ##  [73] ROCR_1.0-11               nlme_3.1-165             
+    ##  [75] bit64_4.0.5               alabaster.ranges_1.4.2   
+    ##  [77] progress_1.2.3            filelock_1.0.3           
+    ##  [79] RcppAnnoy_0.0.22          irlba_2.3.5.1            
+    ##  [81] vipor_0.4.7               KernSmooth_2.23-24       
+    ##  [83] colorspace_2.1-0          DBI_1.2.3                
+    ##  [85] ggrastr_1.0.2             tidyselect_1.2.1         
+    ##  [87] bit_4.0.5                 compiler_4.4.1           
+    ##  [89] curl_5.2.1                httr2_1.0.1              
+    ##  [91] xml2_1.3.6                DelayedArray_0.30.1      
+    ##  [93] plotly_4.10.4             scales_1.3.0             
+    ##  [95] lmtest_0.9-40             rappdirs_0.3.3           
+    ##  [97] digest_0.6.36             goftest_1.2-3            
+    ##  [99] spatstat.utils_3.0-5      alabaster.matrix_1.4.2   
+    ## [101] XVector_0.44.0            htmltools_0.5.8.1        
+    ## [103] pkgconfig_2.0.3           sparseMatrixStats_1.16.0 
+    ## [105] highr_0.11                dbplyr_2.5.0             
+    ## [107] fastmap_1.2.0             rlang_1.1.4              
+    ## [109] htmlwidgets_1.6.4         UCSC.utils_1.0.0         
+    ## [111] shiny_1.8.1.1             DelayedMatrixStats_1.26.0
+    ## [113] farver_2.1.2              zoo_1.8-12               
+    ## [115] jsonlite_1.8.8            BiocSingular_1.20.0      
+    ## [117] magrittr_2.0.3            GenomeInfoDbData_1.2.12  
+    ## [119] dotCall64_1.1-1           patchwork_1.2.0          
+    ## [121] Rhdf5lib_1.26.0           munsell_0.5.1            
+    ## [123] Rcpp_1.0.12               reticulate_1.38.0        
+    ## [125] stringi_1.8.4             alabaster.schemas_1.4.0  
+    ## [127] zlibbioc_1.50.0           MASS_7.3-61              
+    ## [129] AnnotationHub_3.12.0      plyr_1.8.9               
+    ## [131] parallel_4.4.1            listenv_0.9.1            
+    ## [133] deldir_2.0-4              Biostrings_2.72.1        
+    ## [135] splines_4.4.1             tensor_1.5               
+    ## [137] hms_1.1.3                 igraph_2.0.3             
+    ## [139] spatstat.geom_3.2-9       ggsignif_0.6.4           
+    ## [141] reshape2_1.4.4            ScaledMatrix_1.12.0      
+    ## [143] BiocVersion_3.19.1        evaluate_0.24.0          
+    ## [145] BiocManager_1.30.23       tzdb_0.4.0               
+    ## [147] httpuv_1.6.15             RANN_2.6.1               
+    ## [149] polyclip_1.10-6           future_1.33.2            
+    ## [151] scattermore_1.2           rsvd_1.0.5               
+    ## [153] broom_1.0.6               xtable_1.8-4             
+    ## [155] rstatix_0.7.2             later_1.3.2              
+    ## [157] viridisLite_0.4.2         memoise_2.0.1            
+    ## [159] beeswarm_0.4.0            AnnotationDbi_1.66.0     
+    ## [161] cluster_2.1.6             timechange_0.3.0         
+    ## [163] globals_0.16.3
